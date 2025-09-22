@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-energy}
+      POSTGRES_USER: ${POSTGRES_USER:-energy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-energy}
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-energy} -d ${POSTGRES_DB:-energy}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api-dev:
+    image: maven:3.9.9-eclipse-temurin-21
+    working_dir: /workspace
+    command: mvn -U -DskipTests -Dspring-boot.run.jvmArguments="-Dspring.devtools.restart.enabled=true" spring-boot:run
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-energy}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-energy}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-energy}
+      SPRING_PROFILES_ACTIVE: dev
+      MAVEN_OPTS: -XX:+UseParallelGC
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/workspace
+      - m2cache:/root/.m2
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  m2cache:
