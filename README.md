@@ -96,6 +96,12 @@ You may override these defaults by providing a `.env` file, but it is **not requ
 
 ---
 
+### Demo data
+
+An example CSV for the import is provided at `examples/prices-2024.csv`.
+
+---
+
 ### Run Tests
 
 Integration tests use **Testcontainers** to start a temporary **PostgreSQL container** automatically.
