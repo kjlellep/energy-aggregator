@@ -69,6 +69,8 @@ docker compose up --build
 * This builds and starts:
 
   * Spring Boot backend (http://localhost:8080)
+    * Home (`/`) forwards to Actuator links at /actuator
+    * Swagger documentation `/swagger-ui/index.html`
   * PostgreSQL database (localhost:5432 inside Docker)
 
 ---
